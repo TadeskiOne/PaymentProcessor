@@ -7,6 +7,7 @@ use PaymentProcessor\Components\CurrencyApi\Definitions\ApiInterface;
 use PaymentProcessor\Components\CurrencyApi\ExactApi\SimpleApiProvider;
 use PaymentProcessor\Services\ValuationService;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
+use PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistry;
 use PaymentProcessor\Valuation\CommissionsFee\Rules\BusinessWithdrawRule;
 use PaymentProcessor\Valuation\CommissionsFee\Rules\DepositRule;
 use PaymentProcessor\Valuation\CommissionsFee\Rules\PrivateWithdrawRule;
@@ -24,7 +25,7 @@ return [
     DefaultRulesCollector::class => autowire()->constructorParameter('container', autowire(Container::class)),
     RulesMath::class => autowire(),
     BusinessWithdrawRule::class => autowire(),
-    PrivateWithdrawRule::class => fn (ContainerInterface $c) => new PrivateWithdrawRule($c->get(RulesMath::class), $c->get(ApiInterface::class)),
+    PrivateWithdrawRule::class => fn (ContainerInterface $c) => new PrivateWithdrawRule($c->get(RulesMath::class), $c->get(ApiInterface::class), new TransactionsRegistry()),
     DepositRule::class => autowire(),
     RulesCollectorInterface::class => fn (ContainerInterface $c) => new DefaultRulesCollector($c),
     DepositScenario::class => fn (ContainerInterface $c) => new DepositScenario($c->get(RulesCollectorInterface::class)),

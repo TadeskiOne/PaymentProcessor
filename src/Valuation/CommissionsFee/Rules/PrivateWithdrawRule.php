@@ -4,75 +4,27 @@ declare(strict_types=1);
 
 namespace PaymentProcessor\Valuation\CommissionsFee\Rules;
 
-use /*
- * Interface ApiInterface
- *
- * This interface defines the methods that should be implemented by any Currency API class.
- * It provides functionality to retrieve currency rates, convert currency amounts, and get the list of supported currencies.
- *
- * @package PaymentProcessor\Components\CurrencyApi\Definitions
- */
-PaymentProcessor\Components\CurrencyApi\Definitions\ApiInterface;
-use /*
- * Interface RatesCollectionInterface
- *
- * This interface specifies the methods that a rates collection class should implement.
- * Rates collection represents a set of currency exchange rates for a specific point in time.
- * It provides methods for adding and retrieving rates.
- *
- * @package PaymentProcessor\Components\CurrencyApi\Definitions
- */
-PaymentProcessor\Components\CurrencyApi\Definitions\RatesCollectionInterface;
-use /*
- * Interface TransactionImmutableInterface
- *
- * This interface defines the contract for an immutable transaction object.
- * A transaction represents a financial transaction and provides read-only access
- * to its properties.
- */
-PaymentProcessor\Entities\TransactionImmutableInterface;
-use /*
- * Class RulesMath
- *
- * This class provides various mathematical operations and rules for calculating commissions fees.
- */
-PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
-use /*
- * Class FeeAmountType
- *
- * Represents the types of fee amounts for commissions fees.
- */
-PaymentProcessor\Valuation\CommissionsFee\Entities\FeeAmountType;
-use /*
- * Class FeeOperationType
- *
- * Represents the different types of fee operations.
- */
-PaymentProcessor\Valuation\CommissionsFee\Entities\FeeOperationType;
-use /*
- * Exception class for handling undefined currency errors in the CommissionsFee class.
- *
- * This exception is thrown when an undefined currency is encountered
- * when calculating commissions fees.
- *
- * @package PaymentProcessor\Valuation\CommissionsFee\Exceptions
- */
-PaymentProcessor\Valuation\CommissionsFee\Exceptions\UndefinedCurrencyException;
+use PaymentProcessor\Components\CurrencyApi\Definitions\ApiInterface;
+use PaymentProcessor\Entities\TransactionImmutableInterface;
+use PaymentProcessor\Valuation\CommissionsFee\Components\CurrencyConverterTrait;
+use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
+use PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistry;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeAmountType;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeOperationType;
 
 class PrivateWithdrawRule extends AbstractRule implements CommissionFeeRuleInterface
 {
+    use CurrencyConverterTrait;
+
     private const WEEKLY_AMOUNT_RESTRICTION = 1000; // in base currency;
     private const FREE_FROM_FEES_TRANSACTIONS_COUNT = 3;
 
-    private readonly \ArrayObject $transactionsRegistry;
-    private readonly RatesCollectionInterface $rates;
-
     public function __construct(
         RulesMath $operations,
-        private readonly ApiInterface $currenciesApi
+        ApiInterface $currenciesApi,
+        private readonly TransactionsRegistry $transactionsRegistry
     ) {
-        $this->transactionsRegistry = new \ArrayObject([]);
-        $this->rates = $this->currenciesApi->getRates();
+        $this->rates = $currenciesApi->getRates();
 
         parent::__construct($operations);
     }
@@ -94,29 +46,20 @@ class PrivateWithdrawRule extends AbstractRule implements CommissionFeeRuleInter
 
     public function applyTo(TransactionImmutableInterface $transaction): TransactionImmutableInterface
     {
-        $this->validateTransaction($transaction);
-
         $convertedAmount = $this->convertToBaseCurrency($transaction);
-        $start = $transaction->getDateTime()->modify('Monday this week');
-        $end = $start->modify('+6 days');
-        $transactionInterval = sprintf('%s|%s', $start->format('Y-m-d'), $end->format('Y-m-d'));
 
-        unset($start, $end);
+        $this->validateTransaction($transaction);
+        $this->transactionsRegistry->defineInitiator($transaction);
+        $this->transactionsRegistry->defineWeekPeriod($transaction);
 
-        if (!isset($this->transactionsRegistry[$transaction->getInitiatorId()])) {
-            $this->transactionsRegistry->offsetSet($transaction->getInitiatorId(), new \ArrayObject([]));
-        }
-
-        if (isset($this->transactionsRegistry[$transaction->getInitiatorId()][$transactionInterval])) {
+        if ($this->transactionsRegistry->hasWeeklyRegistry()) {
             $commissionFee = 0.00;
 
-            if ($this->transactionsRegistry[$transaction->getInitiatorId()][$transactionInterval]->count() < self::FREE_FROM_FEES_TRANSACTIONS_COUNT) {
+            if ($this->transactionsRegistry->getWeeklyRegistry()->count() < self::FREE_FROM_FEES_TRANSACTIONS_COUNT) {
                 $amountByWeek = 0.00;
 
                 /** @var TransactionImmutableInterface $prevTransaction */
-                foreach (
-                    $this->transactionsRegistry[$transaction->getInitiatorId()][$transactionInterval] as $prevTransaction
-                ) {
+                foreach ($this->transactionsRegistry->getWeeklyRegistry() as $prevTransaction) {
                     $amountByWeek += $this->convertToBaseCurrency($prevTransaction);
                 }
 
@@ -132,15 +75,12 @@ class PrivateWithdrawRule extends AbstractRule implements CommissionFeeRuleInter
                 $commissionFee = $this->operations->ceil($this->operations->applyOperation($transaction->getAmount(), $this));
             }
 
-            $this->transactionsRegistry[$transaction->getInitiatorId()][$transactionInterval]->append($transaction);
+            $this->transactionsRegistry->addWeeklyTransaction($transaction);
 
             return $transaction->modify(amount: $commissionFee);
         }
 
-        $this->transactionsRegistry[$transaction->getInitiatorId()]->offsetSet(
-            $transactionInterval,
-            new \ArrayObject([$transaction])
-        );
+        $this->transactionsRegistry->addWeeklyTransaction($transaction);
 
         return $transaction->modify(
             amount: $convertedAmount > self::WEEKLY_AMOUNT_RESTRICTION
@@ -163,29 +103,4 @@ class PrivateWithdrawRule extends AbstractRule implements CommissionFeeRuleInter
             )
         );
     }
-
-    // region Currency conversion
-    private function convertToBaseCurrency(TransactionImmutableInterface $transaction): float
-    {
-        return $transaction->getAmount() / $this->getCurrencyRate($transaction);
-    }
-
-    private function convertToOriginalCurrency(float $amount, TransactionImmutableInterface $transaction): float
-    {
-        return $amount * $this->getCurrencyRate($transaction);
-    }
-
-    private function getCurrencyRate(TransactionImmutableInterface $transaction)
-    {
-        if ($this->rates->getBaseRate()->getCurrencyTitle() === $transaction->getCurrencyTitle()) {
-            return $this->rates->getBaseRate()->getExchangeValue();
-        }
-
-        if (!isset($this->rates->getRates()[$transaction->getCurrencyTitle()])) {
-            throw new UndefinedCurrencyException($transaction);
-        }
-
-        return $this->rates->getRates()[$transaction->getCurrencyTitle()];
-    }
-    // endregion
 }

@@ -28,6 +28,9 @@ services:
   PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath:
     tags: ['fee.math']
 
+  PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistry:
+    tags: ['fee.component']
+
   PaymentProcessor\Valuation\CommissionsFee\Rules\BusinessWithdrawRule:
     tags: ['fee.rules']
 

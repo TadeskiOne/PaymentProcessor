@@ -3,7 +3,7 @@
 The fundamental idea underlying the architecture of the solution for commission calculation is the structuring of logic into several layers.
 The current implementation distinctly separates into three tiers:
 
-Scenario layer: the logic for determining the criteria for applying a specific set of rules and operations to a transaction. It defines specific conditions and criteria that a transaction must meet to apply calculations; it contains a list of rules and conditions for their application to the transaction.
+- Scenario layer: the logic for determining the criteria for applying a specific set of rules and operations to a transaction. It defines specific conditions and criteria that a transaction must meet to apply calculations; it contains a list of rules and conditions for their application to the transaction.
 Rule layer: the logic for directly processing transactions. Each rule is universal and can be applied to any transaction. The transactions to which specific rules should be applied are determined by the scenario.
 Mathematics layer: the logic for performing mathematical operations on transactions. It contains primitive strategies for applying mathematical formulas to transactions. For example, if a rule specifies that 5% should be added to the transaction amount as margin, the logic encapsulated at this level will first calculate the margin percentage and then add it to the transaction amount.
 This structure is quite flexible and allows creating different sets of tools for working with transactions while maintaining a homogeneous structure between sets. It enables the rapid and flexible development of new sets or the extension of existing ones.
