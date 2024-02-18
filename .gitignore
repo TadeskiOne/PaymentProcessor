@@ -2,3 +2,6 @@ vendor/
 phpunit.xml
 composer.lock
 bin/
+apps/CustomApp/.env
+apps/LaravelApp/.env
+apps/SymfonyApp/.env

@@ -30,6 +30,7 @@
         "bin-dir": "bin"
     },
     "scripts": {
+        "set-envs": "cp .env.example apps/CustomApp/.env && cp .env.example apps/LaravelApp/.env && cp .env.example apps/SymfonyApp/.env",
         "phpunit": "phpunit",
         "fix-cs": "php-cs-fixer fix",
         "test-cs": "php-cs-fixer fix --dry-run -v",

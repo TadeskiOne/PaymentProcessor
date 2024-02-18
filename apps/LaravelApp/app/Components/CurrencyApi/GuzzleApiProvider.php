@@ -22,7 +22,7 @@ final class GuzzleApiProvider implements ApiInterface
     public function getRates(): RatesCollectionInterface
     {
         try {
-            $response = $this->httpClient->get('https://developers.paysera.com/tasks/api/currency-exchange-rates');
+            $response = $this->httpClient->get(getenv('CURRENCY_API_PATH'));
 
             return RatesCollection::make(
                 json_decode($response->getBody()->getContents(), true)

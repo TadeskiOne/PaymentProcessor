@@ -9,6 +9,15 @@ composer install
 
 Minimum requirements is a PHP 8.1 and installed library BCMath
 
+Then, define env-variable CURRENCY_API_PATH in `.env.example`
+```
+CURRENCY_API_PATH='{path_to_get_rates_from_currency_api}'
+```
+And run:
+```shell
+composer run set-envs
+```
+
 ## Run app
 
 Basically run in the terminal from the project root command:

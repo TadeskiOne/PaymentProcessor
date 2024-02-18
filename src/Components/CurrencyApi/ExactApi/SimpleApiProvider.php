@@ -16,7 +16,7 @@ final class SimpleApiProvider implements ApiInterface
     {
         try {
             return RatesCollection::make(
-                json_decode(file_get_contents('https://developers.paysera.com/tasks/api/currency-exchange-rates'), true)
+                json_decode(file_get_contents(getenv('CURRENCY_API_PATH')), true)
             );
         } catch (\Throwable $e) {
             throw new UnableToGetRatesException($e);
