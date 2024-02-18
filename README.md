@@ -2,15 +2,23 @@
 
 ## Installation
 
+You can up Docker container:
+```shell
+docker-compose up -d
+```
+or do it directly
+
 Open root of project via terminal and specify:
 ```shell
 composer install
 ```
-
-Minimum requirements is a PHP 8.1 or up Docker container
+OR via Docker
 ```shell
-docker-compose up -d
+docker exec -it pay-process bash
+>> composer install
 ```
+
+Minimum requirements is a PHP 8.1 if you'll run app without Docker
 
 Then, define env-variable CURRENCY_API_PATH in `.env.example`
 ```
@@ -19,6 +27,11 @@ CURRENCY_API_PATH='{path_to_get_rates_from_currency_api}'
 And run:
 ```shell
 composer run set-envs
+```
+OR via Docker
+```shell
+docker exec -it pay-process bash
+>> composer run set-envs
 ```
 
 ## Run app
