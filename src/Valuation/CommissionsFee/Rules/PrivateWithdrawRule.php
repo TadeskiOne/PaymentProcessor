@@ -8,7 +8,7 @@ use PaymentProcessor\Components\CurrencyApi\Definitions\ApiInterface;
 use PaymentProcessor\Entities\TransactionImmutableInterface;
 use PaymentProcessor\Valuation\CommissionsFee\Components\CurrencyConverterTrait;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
-use PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistry;
+use PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistryInterface;
 use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeAmountType;
 use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeOperationType;
 
@@ -22,7 +22,7 @@ class PrivateWithdrawRule extends AbstractRule implements CommissionFeeRuleInter
     public function __construct(
         RulesMath $operations,
         ApiInterface $currenciesApi,
-        private readonly TransactionsRegistry $transactionsRegistry
+        private readonly TransactionsRegistryInterface $transactionsRegistry
     ) {
         $this->rates = $currenciesApi->getRates();
 

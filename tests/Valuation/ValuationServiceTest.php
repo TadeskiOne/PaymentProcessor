@@ -6,7 +6,7 @@ namespace PaymentProcessor\Tests\Valuation;
 
 use PaymentProcessor\Services\ValuationService;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
-use PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistry;
+use PaymentProcessor\Valuation\CommissionsFee\Components\DefaultTransactionsRegistry;
 use PaymentProcessor\Valuation\CommissionsFee\Rules\BusinessWithdrawRule;
 use PaymentProcessor\Valuation\CommissionsFee\Rules\DepositRule;
 use PaymentProcessor\Valuation\CommissionsFee\Rules\PrivateWithdrawRule;
@@ -36,7 +36,7 @@ class ValuationServiceTest extends TestCase
                       new PrivateWithdrawRule(
                           $math,
                           $this->setUpApi()->reveal(),
-                          new TransactionsRegistry()
+                          new DefaultTransactionsRegistry()
                       )
                   );
         $collector->collectRule(BusinessWithdrawRule::class)

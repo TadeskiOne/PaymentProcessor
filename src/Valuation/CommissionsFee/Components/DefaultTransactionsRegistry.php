@@ -6,7 +6,7 @@ namespace PaymentProcessor\Valuation\CommissionsFee\Components;
 
 use PaymentProcessor\Entities\TransactionImmutableInterface;
 
-class TransactionsRegistry
+class DefaultTransactionsRegistry implements TransactionsRegistryInterface
 {
     /* date_from|date_to */
     private ?string $weekPeriod = null;
@@ -18,21 +18,17 @@ class TransactionsRegistry
         $this->registry = new \ArrayObject([]);
     }
 
-    public function defineInitiator(TransactionImmutableInterface $transaction): self
+    public function defineInitiator(TransactionImmutableInterface $transaction): void
     {
         $this->initiatorId = $transaction->getInitiatorId();
         $this->setInitiatorRegistry();
-
-        return $this;
     }
 
-    public function defineWeekPeriod(TransactionImmutableInterface $transaction): self
+    public function defineWeekPeriod(TransactionImmutableInterface $transaction): void
     {
         $start = $transaction->getDateTime()->modify('Monday this week');
         $end = $start->modify('+6 days');
         $this->weekPeriod = sprintf('%s|%s', $start->format('Y-m-d'), $end->format('Y-m-d'));
-
-        return $this;
     }
 
     public function hasWeeklyRegistry(): bool
@@ -44,7 +40,7 @@ class TransactionsRegistry
         return false;
     }
 
-    public function getWeeklyRegistry(): \ArrayObject
+    public function getWeeklyRegistry(): \ArrayAccess
     {
         return $this->registry[$this->initiatorId]['week'][$this->weekPeriod];
     }

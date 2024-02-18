@@ -9,7 +9,6 @@ use PaymentProcessor\Entities\TransactionImmutableInterface;
 use PaymentProcessor\Valuation\CommissionsFee\Scenarios\DepositScenario;
 use PaymentProcessor\Valuation\CommissionsFee\Scenarios\WithdrawScenario;
 use PaymentProcessor\Valuation\Definitions\ScenarioInterface;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -24,16 +23,7 @@ final class ValuationService
     {
     }
 
-    /**
-     * Calculates commission fees for transactions using a given data provider.
-     *
-     * @param DataProviderInterface $dataProvider the data provider that contains the transactions
-     *
-     * @return \ArrayObject the commission fees calculated for each transaction
-     *
-     * @throws ContainerExceptionInterface
-     */
-    public function calculateCommissionFees(DataProviderInterface $dataProvider): \ArrayObject
+    public function calculateCommissionFees(DataProviderInterface $dataProvider): \ArrayAccess
     {
         $fees = new \ArrayObject([]);
 

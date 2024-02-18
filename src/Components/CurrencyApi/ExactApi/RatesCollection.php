@@ -30,7 +30,7 @@ final class RatesCollection implements RatesCollectionInterface
         $this->rates->offsetSet($key, $value);
     }
 
-    public function getRates(): \ArrayObject
+    public function getRates(): \ArrayAccess
     {
         return $this->rates;
     }

@@ -8,7 +8,7 @@ use PaymentProcessor\Entities\Enums\InitiatorType;
 use PaymentProcessor\Entities\Enums\TransactionType;
 use PaymentProcessor\Entities\TransactionImmutable;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
-use PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistry;
+use PaymentProcessor\Valuation\CommissionsFee\Components\DefaultTransactionsRegistry;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\NegativeAmountException;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\UndefinedCurrencyException;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\ZeroAmountException;
@@ -29,7 +29,7 @@ class WithdrawScenarioTest extends TestCase
     public function setUp(): void
     {
         $math = new RulesMath();
-        $privateWithdrawRule = new PrivateWithdrawRule($math, $this->setUpApi()->reveal(), new TransactionsRegistry());
+        $privateWithdrawRule = new PrivateWithdrawRule($math, $this->setUpApi()->reveal(), new DefaultTransactionsRegistry());
         $businessWithdrawRule = new BusinessWithdrawRule($math);
 
         $collector = $this->prophesize(RulesCollectorInterface::class);

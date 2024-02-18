@@ -28,8 +28,10 @@ services:
   PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath:
     tags: ['fee.math']
 
-  PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistry:
+  PaymentProcessor\Valuation\CommissionsFee\Components\DefaultTransactionsRegistry:
     tags: ['fee.component']
+
+  PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistryInterface: '@PaymentProcessor\Valuation\CommissionsFee\Components\DefaultTransactionsRegistry'
 
   PaymentProcessor\Valuation\CommissionsFee\Rules\BusinessWithdrawRule:
     tags: ['fee.rules']

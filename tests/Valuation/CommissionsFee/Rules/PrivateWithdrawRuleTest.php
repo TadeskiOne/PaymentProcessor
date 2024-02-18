@@ -9,7 +9,7 @@ use PaymentProcessor\Entities\Enums\TransactionType;
 use PaymentProcessor\Entities\TransactionImmutable;
 use PaymentProcessor\Tests\Mocks\CurrencyApi\SetUpCurrencyApi;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
-use PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistry;
+use PaymentProcessor\Valuation\CommissionsFee\Components\DefaultTransactionsRegistry;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\NegativeAmountException;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\UndefinedCurrencyException;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\ZeroAmountException;
@@ -25,7 +25,7 @@ class PrivateWithdrawRuleTest extends TestCase
     public function setUp(): void
     {
         $apiInterface = $this->setUpApi();
-        $this->rule = new PrivateWithdrawRule(new RulesMath(), $apiInterface->reveal(), new TransactionsRegistry());
+        $this->rule = new PrivateWithdrawRule(new RulesMath(), $apiInterface->reveal(), new DefaultTransactionsRegistry());
     }
 
     public function transactionsProvider(): array
