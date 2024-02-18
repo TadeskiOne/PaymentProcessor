@@ -8,6 +8,7 @@
     "symfony/dependency-injection": "^6.4",
     "symfony/yaml": "^6.4",
     "guzzlehttp/guzzle": "^7.2",
+    "symfony/dotenv": "^5.2",
     "tadeskione/payment-processor": "*"
   },
   "autoload": {
@@ -25,5 +26,5 @@
     }
   ],
   "minimum-stability": "stable",
-  "version": "1.0.0"
+  "version": "1.0.1"
 }

@@ -20,7 +20,7 @@ final class RatesCollection implements RatesCollectionInterface
     {
         $rates = new self(new \ArrayObject());
         $rates->initCollectionFromRaw($rawRates['rates'] ?? []);
-        $rates->baseRate = new Rate($rawRates['base'] ?? 'EUR', 1);
+        $rates->baseRate = new Rate($rawRates['base'] ?? getenv('BASE_CURRENCY'), 1);
 
         return $rates;
     }
