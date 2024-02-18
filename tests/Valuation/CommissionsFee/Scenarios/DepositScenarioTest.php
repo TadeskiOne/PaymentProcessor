@@ -10,7 +10,7 @@ use PaymentProcessor\Entities\TransactionImmutable;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\NegativeAmountException;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\ZeroAmountException;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\DepositRule;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\SimpleFeeRule;
 use PaymentProcessor\Valuation\CommissionsFee\Scenarios\DepositScenario;
 use PaymentProcessor\Valuation\Definitions\RulesCollectorInterface;
 use PHPUnit\Framework\TestCase;
@@ -26,7 +26,7 @@ class DepositScenarioTest extends TestCase
     public function setUp(): void
     {
         $collector = $this->prophesize(RulesCollectorInterface::class);
-        $collector->collectRule(DepositRule::class)->willReturn(new DepositRule(new RulesMath()));
+        $collector->collectRule(SimpleFeeRule::class)->willReturn(new SimpleFeeRule(new RulesMath()));
 
         $this->scenario = new DepositScenario($collector->reveal());
     }

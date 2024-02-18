@@ -33,13 +33,10 @@ services:
 
   PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistryInterface: '@PaymentProcessor\Valuation\CommissionsFee\Components\DefaultTransactionsRegistry'
 
-  PaymentProcessor\Valuation\CommissionsFee\Rules\BusinessWithdrawRule:
+  PaymentProcessor\Valuation\CommissionsFee\Rules\HasFreeFromFeesRule:
     tags: ['fee.rules']
 
-  PaymentProcessor\Valuation\CommissionsFee\Rules\PrivateWithdrawRule:
-    tags: ['fee.rules']
-
-  PaymentProcessor\Valuation\CommissionsFee\Rules\DepositRule:
+  PaymentProcessor\Valuation\CommissionsFee\Rules\SimpleFeeRule:
     tags: ['fee.rules']
 
   PaymentProcessor\Valuation\CommissionsFee\Scenarios\DepositScenario:

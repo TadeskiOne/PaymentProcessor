@@ -11,7 +11,7 @@ The lowest level of logic is the mathematical operation handler. It encapsulates
 ## Scenarios
 
 ### DepositScenario
-This class represents a specific scenario for applying rules to deposit transactions. It extends `AbstractScenario`. It implements the `applyTo()` function which is scoped to work specifically with deposit type transactions, leveraging DepositRule.
+This class represents a specific scenario for applying rules to deposit transactions. It extends `AbstractScenario`. It implements the `applyTo()` function which is scoped to work specifically with deposit type transactions, leveraging SimpleFeeRule.
 
 ### WithdrawScenario
 The WithdrawScenario class extends the `AbstractScenario` class. The purpose of this class is to apply certain rules depending on one of two possible scenarios: a private initiator of the transaction or a business initiator of the transaction.
@@ -24,23 +24,19 @@ The `applyTo()` method first checks if the transaction type is not 'withdraw', i
 
 In this toolkit, all rules are expected to return a `TransactionImmutableInterface`, meaning a new instance of the input transaction with the modified amount - the result of calculations according to the rule. This is necessary to ensure the ability to form a chain of rules, where each subsequent rule will process the result from the previous one.
 
-### BusinessWithdrawRule
-The `BusinessWithdrawRule` class extends the `AbstractRule` class and implements the `CommissionFeeRuleInterface`. This class corresponds to the rule that is applied for a transaction when the initiator type is `business`. It sets the amount of the fee, the fee type and the operation type.
-
-### PrivateWithdrawRule
-The PrivateWithdrawRule class extends an AbstractRule and implements CommissionFeeRuleInterface. This class defines the commission fee calculation rules for private withdrawals.
-#### Constant: WEEKLY_AMOUNT_RESTRICTION
+### HasFreeFromFeesRule
+The HasFreeFromFeesRule class extends an AbstractRule and implements CommissionFeeRuleInterface. This class defines the commission fee calculation rules for private withdrawals.
+#### Property: weeklyAmountRestriction
 The weekly amount restriction for transactions. The value is set to 1000 in the base currency. Transactions exceeding this limit are subject to commission fees.
-#### Constant: FREE_FROM_FEES_TRANSACTIONS_COUNT
+#### Property: freeFromFeesCount
 The number of transactions per week that are exempt from commission fees. The value is set to 3.
 #### Property: transactionsRegistry
-A registry of processed transactions stored for fee calculation purposes. It's an instance of \ArrayObject.
-#### Property: rates
-A collection of exchange rates fetched from the currency API.
+A registry of processed transactions stored for fee calculation purposes. It's an instance of `TransactionsRegistryInterface`.
+
 #### Method: applyTo
 Applies the private withdraw rule to a given transaction. It performs certain validation, fetches and formats dates for the transaction, registers the transaction in the transactions registry, and applies necessary calculations to determine the commission fee amount.
 
-### DepositRule
+### SimpleFeeRule
 This class establishes the specific rule for deposit transactions. It extends `AbstractRule` and implements `CommissionFeeRuleInterface`.
 
 ## Math Handlers

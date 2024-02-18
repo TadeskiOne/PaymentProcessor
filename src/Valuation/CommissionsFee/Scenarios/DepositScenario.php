@@ -6,7 +6,9 @@ namespace PaymentProcessor\Valuation\CommissionsFee\Scenarios;
 
 use PaymentProcessor\Entities\Enums\TransactionType;
 use PaymentProcessor\Entities\TransactionImmutableInterface;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\DepositRule;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeAmountType;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeOperationType;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\SimpleFeeRule;
 
 final class DepositScenario extends AbstractScenario
 {
@@ -16,6 +18,10 @@ final class DepositScenario extends AbstractScenario
             return null;
         }
 
-        return $this->collector->collectRule(DepositRule::class)->applyTo($transaction);
+        return $this->collector->collectRule(SimpleFeeRule::class)
+            ->setAmount(0.03)
+            ->setAmountType(FeeAmountType::percentage)
+            ->setOperationType(FeeOperationType::multiply)
+            ->applyTo($transaction);
     }
 }

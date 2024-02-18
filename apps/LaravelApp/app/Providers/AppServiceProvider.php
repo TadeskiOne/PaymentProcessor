@@ -8,9 +8,8 @@ use PaymentProcessor\Components\CurrencyApi\Definitions\ApiInterface;
 use PaymentProcessor\Apps\Laravel\Components\CurrencyApi\GuzzleApiProvider;
 use PaymentProcessor\Services\ValuationService;
 use PaymentProcessor\Valuation\CommissionsFee\Components\DefaultTransactionsRegistry;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\BusinessWithdrawRule;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\DepositRule;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\PrivateWithdrawRule;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\SimpleFeeRule;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\HasFreeFromFeesRule;
 use PaymentProcessor\Valuation\CommissionsFee\Scenarios\DepositScenario;
 use PaymentProcessor\Valuation\CommissionsFee\Scenarios\WithdrawScenario;
 use PaymentProcessor\Valuation\Components\DefaultRulesCollector;
@@ -35,9 +34,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(RulesCollectorInterface::class, DefaultRulesCollector::class);
         $this->app->bind(TransactionsRegistryInterface::class, DefaultTransactionsRegistry::class);
 
-        $this->app->singleton(BusinessWithdrawRule::class);
-        $this->app->singleton(DepositRule::class);
-        $this->app->singleton(PrivateWithdrawRule::class);
+        $this->app->singleton(SimpleFeeRule::class);
+        $this->app->singleton(HasFreeFromFeesRule::class);
     }
 
     /**

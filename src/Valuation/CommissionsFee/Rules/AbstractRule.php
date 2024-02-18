@@ -6,30 +6,23 @@ namespace PaymentProcessor\Valuation\CommissionsFee\Rules;
 
 use PaymentProcessor\Entities\TransactionImmutableInterface;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeAmountType;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeOperationType;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\NegativeAmountException;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\ZeroAmountException;
+use PaymentProcessor\Valuation\Definitions\RuleAmountTypeInterface;
+use PaymentProcessor\Valuation\Definitions\RuleOperationTypeInterface;
 
-/**
- * AbstractRule is an abstract class that implements the CommissionFeeRuleInterface.
- *
- * It provides a base implementation for applying commission fees to transactions.
- */
 abstract class AbstractRule implements CommissionFeeRuleInterface
 {
-    public function __construct(protected readonly RulesMath $operations)
-    {
-    }
+    protected float $amount = 0.00;
 
-    /**
-     * Applies the operation to a transaction.
-     *
-     * @param TransactionImmutableInterface $transaction the transaction to apply the operation to
-     *
-     * @return TransactionImmutableInterface the modified transaction after applying the operation
-     *
-     * @throws NegativeAmountException if the transaction amount is negative after applying the operation
-     * @throws ZeroAmountException     if the transaction amount is zero after applying the operation
-     */
+    protected FeeAmountType    $amountType;
+
+    protected FeeOperationType $feeOperationType;
+
+    public function __construct(protected readonly RulesMath $operations) {}
+
     public function applyTo(TransactionImmutableInterface $transaction): TransactionImmutableInterface
     {
         $this->validateTransaction($transaction);
@@ -39,14 +32,49 @@ abstract class AbstractRule implements CommissionFeeRuleInterface
         );
     }
 
-    /**
-     * Validates a transaction.
-     *
-     * @param TransactionImmutableInterface $transaction the transaction to validate
-     *
-     * @throws NegativeAmountException if the transaction amount is negative
-     * @throws ZeroAmountException     if the transaction amount is zero
-     */
+    public function setAmount(float $amount): static
+    {
+        $this->amount = $amount;
+        return $this;
+    }
+
+    public function getAmount(): float
+    {
+        return $this->amount;
+    }
+
+    public function setAmountType(RuleAmountTypeInterface $amountType): static
+    {
+        $this->amountType = $amountType;
+        return $this;
+    }
+
+    public function getAmountType(): FeeAmountType
+    {
+        return $this->amountType;
+    }
+
+    public function setOperationType(RuleOperationTypeInterface $feeOperationType): static
+    {
+        $this->feeOperationType = $feeOperationType;
+        return $this;
+    }
+
+    public function getOperationType(): FeeOperationType
+    {
+        return $this->feeOperationType;
+    }
+
+    public function getOptionsNames(): array
+    {
+        return [];
+    }
+
+    public function setOptions(mixed ...$options): static
+    {
+        return $this;
+    }
+
     protected function validateTransaction(TransactionImmutableInterface $transaction): void
     {
         if ($transaction->getAmount() < 0) {

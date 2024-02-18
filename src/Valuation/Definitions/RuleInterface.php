@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace PaymentProcessor\Valuation\Definitions;
 
-/**
- * Interface RuleInterface.
- *
- * This interface defines the methods for a rule that calculates fees based on certain criteria.
- */
 interface RuleInterface
 {
-    /**
-     * Retrieves the amount value of the calculation rule.
-     *
-     * @return float the amount value of the calculation rule
-     */
+    public function setAmount(float $amount): static;
+
     public function getAmount(): float;
+
+    public function setAmountType(RuleAmountTypeInterface $amountType): static;
 
     public function getAmountType(): RuleAmountTypeInterface;
 
+    public function setOperationType(RuleOperationTypeInterface $feeOperationType): static;
+
     public function getOperationType(): RuleOperationTypeInterface;
+
+    public function getOptionsNames(): array;
+
+    public function setOptions(mixed ...$options): static;
 }

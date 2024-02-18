@@ -8,8 +8,10 @@ use PaymentProcessor\Entities\Enums\InitiatorType;
 use PaymentProcessor\Entities\Enums\TransactionType;
 use PaymentProcessor\Entities\TransactionImmutableInterface;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesChain;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\BusinessWithdrawRule;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\PrivateWithdrawRule;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeAmountType;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeOperationType;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\HasFreeFromFeesRule;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\SimpleFeeRule;
 
 final class WithdrawScenario extends AbstractScenario
 {
@@ -21,10 +23,21 @@ final class WithdrawScenario extends AbstractScenario
 
         return match ($transaction->getInitiatorType()) {
             InitiatorType::private => (new RulesChain())
-                ->addRule($this->collector->collectRule(PrivateWithdrawRule::class))
+                ->addRule(
+                    $this->collector->collectRule(HasFreeFromFeesRule::class)
+                    ->setAmount(0.3)
+                    ->setAmountType(FeeAmountType::percentage)
+                    ->setOperationType(FeeOperationType::multiply)
+                    ->setOptions(weeklyAmountRestriction: 1000, freeFromFeesCount: 3)
+                )
                 ->handle($transaction),
             InitiatorType::business => (new RulesChain())
-                ->addRule($this->collector->collectRule(BusinessWithdrawRule::class))
+                ->addRule(
+                    $this->collector->collectRule(SimpleFeeRule::class)
+                    ->setAmount(0.5)
+                    ->setAmountType(FeeAmountType::percentage)
+                    ->setOperationType(FeeOperationType::multiply)
+                )
                 ->handle($transaction)
         };
     }

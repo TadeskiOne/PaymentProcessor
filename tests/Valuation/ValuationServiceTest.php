@@ -7,9 +7,8 @@ namespace PaymentProcessor\Tests\Valuation;
 use PaymentProcessor\Services\ValuationService;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
 use PaymentProcessor\Valuation\CommissionsFee\Components\DefaultTransactionsRegistry;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\BusinessWithdrawRule;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\DepositRule;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\PrivateWithdrawRule;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\SimpleFeeRule;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\HasFreeFromFeesRule;
 use PaymentProcessor\Valuation\CommissionsFee\Scenarios\DepositScenario;
 use PaymentProcessor\Valuation\CommissionsFee\Scenarios\WithdrawScenario;
 use PaymentProcessor\Valuation\Definitions\RulesCollectorInterface;
@@ -31,18 +30,17 @@ class ValuationServiceTest extends TestCase
         $math = new RulesMath();
 
         $collector = $this->prophesize(RulesCollectorInterface::class);
-        $collector->collectRule(PrivateWithdrawRule::class)
+        $collector->collectRule(HasFreeFromFeesRule::class)
                   ->willReturn(
-                      new PrivateWithdrawRule(
+                      new HasFreeFromFeesRule(
                           $math,
                           $this->setUpApi()->reveal(),
                           new DefaultTransactionsRegistry()
                       )
                   );
-        $collector->collectRule(BusinessWithdrawRule::class)
-                  ->willReturn(new BusinessWithdrawRule($math));
-        $collector->collectRule(DepositRule::class)
-                  ->willReturn(new DepositRule($math));
+
+        $collector->collectRule(SimpleFeeRule::class)
+                  ->willReturn(new SimpleFeeRule($math));
 
         $container = $this->prophesize(ContainerInterface::class);
         $container->get(DepositScenario::class)

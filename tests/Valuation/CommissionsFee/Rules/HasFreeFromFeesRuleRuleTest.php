@@ -7,65 +7,64 @@ namespace PaymentProcessor\Tests\Valuation\CommissionsFee\Rules;
 use PaymentProcessor\Entities\Enums\InitiatorType;
 use PaymentProcessor\Entities\Enums\TransactionType;
 use PaymentProcessor\Entities\TransactionImmutable;
+use PaymentProcessor\Tests\Mocks\CurrencyApi\SetUpCurrencyApi;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
+use PaymentProcessor\Valuation\CommissionsFee\Components\DefaultTransactionsRegistry;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeAmountType;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeOperationType;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\NegativeAmountException;
+use PaymentProcessor\Valuation\CommissionsFee\Exceptions\UndefinedCurrencyException;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\ZeroAmountException;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\DepositRule;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\HasFreeFromFeesRule;
 use PHPUnit\Framework\TestCase;
 
-class DepositRuleTest extends TestCase
+class HasFreeFromFeesRuleRuleTest extends TestCase
 {
-    private DepositRule $rule;
+    use SetUpCurrencyApi;
+
+    private HasFreeFromFeesRule $rule;
 
     public function setUp(): void
     {
-        $this->rule = new DepositRule(new RulesMath());
+        $apiInterface = $this->setUpApi();
+        $this->rule = (new HasFreeFromFeesRule(new RulesMath(), $apiInterface->reveal(), new DefaultTransactionsRegistry()))
+            ->setAmount(0.3)
+            ->setAmountType(FeeAmountType::percentage)
+            ->setOperationType(FeeOperationType::multiply)
+            ->setOptions(weeklyAmountRestriction: 1000, freeFromFeesCount: 3);
     }
 
     public function transactionsProvider(): array
     {
         return [
-            'Two transactions' => [
+            'Three transactions' => [
                 [
                     new TransactionImmutable(
-                        \DateTimeImmutable::createFromFormat('Y-m-d', '2016-01-05'),
-                        1,
+                        \DateTimeImmutable::createFromFormat('Y-m-d', '2014-12-31'),
+                        4,
                         InitiatorType::private,
-                        TransactionType::deposit,
-                        200.00,
+                        TransactionType::withdraw,
+                        1200.00,
                         'EUR'
                     ),
                     new TransactionImmutable(
-                        \DateTimeImmutable::createFromFormat('Y-m-d', '2016-01-10'),
-                        1,
-                        InitiatorType::business,
-                        TransactionType::deposit,
-                        10000.00,
-                        'JPY'
-                    ),
-                ],
-                [0.06, 3],
-            ],
-            'Two transactions, different initiators' => [
-                [
-                    new TransactionImmutable(
-                        \DateTimeImmutable::createFromFormat('Y-m-d', '2016-01-05'),
-                        1,
+                        \DateTimeImmutable::createFromFormat('Y-m-d', '2015-01-01'),
+                        4,
                         InitiatorType::private,
-                        TransactionType::deposit,
-                        200.00,
+                        TransactionType::withdraw,
+                        1000.00,
                         'EUR'
                     ),
                     new TransactionImmutable(
-                        \DateTimeImmutable::createFromFormat('Y-m-d', '2016-01-10'),
-                        2,
-                        InitiatorType::business,
-                        TransactionType::deposit,
-                        10000.00,
-                        'JPY'
+                        \DateTimeImmutable::createFromFormat('Y-m-d', '2016-01-05'),
+                        4,
+                        InitiatorType::private,
+                        TransactionType::withdraw,
+                        1000.00,
+                        'EUR'
                     ),
                 ],
-                [0.06, 3],
+                [0.6, 3, 0],
             ],
         ];
     }
@@ -84,12 +83,24 @@ class DepositRuleTest extends TestCase
     public function invalidTransactionsProvider(): array
     {
         return [
+            // Test invalid currency.
+            'Invalid currency' => [
+                new TransactionImmutable(
+                    \DateTimeImmutable::createFromFormat('Y-m-d', '2014-12-31'),
+                    4,
+                    InitiatorType::private,
+                    TransactionType::withdraw,
+                    1200.00,
+                    'INVALID'
+                ),
+                UndefinedCurrencyException::class,
+            ],
             // Test transaction with 0 amount.
             'Zero transaction' => [
                 new TransactionImmutable(
                     \DateTimeImmutable::createFromFormat('Y-m-d', '2014-11-11'),
                     4,
-                    InitiatorType::business,
+                    InitiatorType::private,
                     TransactionType::withdraw,
                     0.00,
                     'EUR'
@@ -101,7 +112,7 @@ class DepositRuleTest extends TestCase
                 new TransactionImmutable(
                     \DateTimeImmutable::createFromFormat('Y-m-d', '2014-11-11'),
                     4,
-                    InitiatorType::business,
+                    InitiatorType::private,
                     TransactionType::withdraw,
                     -100.00,
                     'EUR'

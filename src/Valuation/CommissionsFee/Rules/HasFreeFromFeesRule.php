@@ -9,15 +9,12 @@ use PaymentProcessor\Entities\TransactionImmutableInterface;
 use PaymentProcessor\Valuation\CommissionsFee\Components\CurrencyConverterTrait;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
 use PaymentProcessor\Valuation\CommissionsFee\Components\TransactionsRegistryInterface;
-use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeAmountType;
-use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeOperationType;
 
-class PrivateWithdrawRule extends AbstractRule implements CommissionFeeRuleInterface
+class HasFreeFromFeesRule extends AbstractRule implements CommissionFeeRuleInterface
 {
     use CurrencyConverterTrait;
-
-    private const WEEKLY_AMOUNT_RESTRICTION = 1000; // in base currency;
-    private const FREE_FROM_FEES_TRANSACTIONS_COUNT = 3;
+    private ?int $weeklyAmountRestriction = null;
+    private ?int $freeFromFeesCount = 0;
 
     public function __construct(
         RulesMath $operations,
@@ -29,19 +26,23 @@ class PrivateWithdrawRule extends AbstractRule implements CommissionFeeRuleInter
         parent::__construct($operations);
     }
 
-    public function getAmount(): float
+    public function getOptionsNames(): array
     {
-        return 0.3;
+        return [
+            'weeklyAmountRestriction',
+            'freeFromFeesCount',
+        ];
     }
 
-    public function getAmountType(): FeeAmountType
+    public function setOptions(...$options): static
     {
-        return FeeAmountType::percentage;
-    }
+        foreach ($options as $name => $value) {
+            if (property_exists($this, $name)) {
+                $this->{$name} = $value;
+            }
+        }
 
-    public function getOperationType(): FeeOperationType
-    {
-        return FeeOperationType::multiply;
+        return $this;
     }
 
     public function applyTo(TransactionImmutableInterface $transaction): TransactionImmutableInterface
@@ -53,22 +54,22 @@ class PrivateWithdrawRule extends AbstractRule implements CommissionFeeRuleInter
         $this->transactionsRegistry->defineWeekPeriod($transaction);
 
         if ($this->transactionsRegistry->hasWeeklyRegistry()) {
-            $commissionFee = 0.00;
-
-            if ($this->transactionsRegistry->getWeeklyRegistry()->count() < self::FREE_FROM_FEES_TRANSACTIONS_COUNT) {
-                $amountByWeek = 0.00;
+            if ($this->transactionsRegistry->getWeeklyRegistry()->count() < $this->freeFromFeesCount && !$this->weeklyAmountRestriction) {
+                $commissionFee = 0.00;
+            } elseif ($this->transactionsRegistry->getWeeklyRegistry()->count() < $this->freeFromFeesCount) {
+                $commissionFee = $amountByWeek = 0.00;
 
                 /** @var TransactionImmutableInterface $prevTransaction */
                 foreach ($this->transactionsRegistry->getWeeklyRegistry() as $prevTransaction) {
                     $amountByWeek += $this->convertToBaseCurrency($prevTransaction);
                 }
 
-                if ($amountByWeek > self::WEEKLY_AMOUNT_RESTRICTION) {
+                if ($amountByWeek > $this->weeklyAmountRestriction) {
                     $commissionFee = $this->calcFeeForExceededAmountOfWeeklyRestriction($convertedAmount, $transaction);
                 } else {
                     $amountByWeek += $convertedAmount;
-                    if ($amountByWeek > self::WEEKLY_AMOUNT_RESTRICTION) {
-                        $commissionFee = $this->calcFeeForExceededAmountOfWeeklyRestriction($amountByWeek - self::WEEKLY_AMOUNT_RESTRICTION, $transaction);
+                    if ($amountByWeek > $this->weeklyAmountRestriction) {
+                        $commissionFee = $this->calcFeeForExceededAmountOfWeeklyRestriction($amountByWeek - $this->weeklyAmountRestriction, $transaction);
                     }
                 }
             } else {
@@ -83,9 +84,9 @@ class PrivateWithdrawRule extends AbstractRule implements CommissionFeeRuleInter
         $this->transactionsRegistry->addWeeklyTransaction($transaction);
 
         return $transaction->modify(
-            amount: $convertedAmount > self::WEEKLY_AMOUNT_RESTRICTION
+            amount: $this->weeklyAmountRestriction && $convertedAmount > $this->weeklyAmountRestriction
                        ? $this->calcFeeForExceededAmountOfWeeklyRestriction(
-                           $convertedAmount - self::WEEKLY_AMOUNT_RESTRICTION,
+                           $convertedAmount - $this->weeklyAmountRestriction,
                            $transaction
                        )
                        : 0.00

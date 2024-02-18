@@ -12,8 +12,8 @@ use PaymentProcessor\Valuation\CommissionsFee\Components\DefaultTransactionsRegi
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\NegativeAmountException;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\UndefinedCurrencyException;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\ZeroAmountException;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\BusinessWithdrawRule;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\PrivateWithdrawRule;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\HasFreeFromFeesRule;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\SimpleFeeRule;
 use PaymentProcessor\Valuation\CommissionsFee\Scenarios\WithdrawScenario;
 use PaymentProcessor\Valuation\Definitions\RulesCollectorInterface;
 use PHPUnit\Framework\TestCase;
@@ -29,12 +29,12 @@ class WithdrawScenarioTest extends TestCase
     public function setUp(): void
     {
         $math = new RulesMath();
-        $privateWithdrawRule = new PrivateWithdrawRule($math, $this->setUpApi()->reveal(), new DefaultTransactionsRegistry());
-        $businessWithdrawRule = new BusinessWithdrawRule($math);
+        $privateWithdrawRule = new HasFreeFromFeesRule($math, $this->setUpApi()->reveal(), new DefaultTransactionsRegistry());
+        $businessWithdrawRule = new SimpleFeeRule($math);
 
         $collector = $this->prophesize(RulesCollectorInterface::class);
-        $collector->collectRule(PrivateWithdrawRule::class)->willReturn($privateWithdrawRule);
-        $collector->collectRule(BusinessWithdrawRule::class)->willReturn($businessWithdrawRule);
+        $collector->collectRule(HasFreeFromFeesRule::class)->willReturn($privateWithdrawRule);
+        $collector->collectRule(SimpleFeeRule::class)->willReturn($businessWithdrawRule);
 
         $this->scenario = new WithdrawScenario($collector->reveal());
     }

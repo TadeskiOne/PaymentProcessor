@@ -8,18 +8,24 @@ use PaymentProcessor\Entities\Enums\InitiatorType;
 use PaymentProcessor\Entities\Enums\TransactionType;
 use PaymentProcessor\Entities\TransactionImmutable;
 use PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeAmountType;
+use PaymentProcessor\Valuation\CommissionsFee\Entities\FeeOperationType;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\NegativeAmountException;
 use PaymentProcessor\Valuation\CommissionsFee\Exceptions\ZeroAmountException;
-use PaymentProcessor\Valuation\CommissionsFee\Rules\BusinessWithdrawRule;
+use PaymentProcessor\Valuation\CommissionsFee\Rules\SimpleFeeRule;
 use PHPUnit\Framework\TestCase;
 
-class BusinessWithdrawRuleTest extends TestCase
+class SimpleRuleTest extends TestCase
 {
-    private BusinessWithdrawRule $rule;
+    private SimpleFeeRule $rule;
 
     public function setUp(): void
     {
-        $this->rule = new BusinessWithdrawRule(new RulesMath());
+        $this->rule = new SimpleFeeRule(new RulesMath());
+        $this->rule
+            ->setAmount(0.5)
+            ->setAmountType(FeeAmountType::percentage)
+            ->setOperationType(FeeOperationType::multiply);
     }
 
     public function transactionsProvider(): array
