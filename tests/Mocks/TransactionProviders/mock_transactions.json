@@ -1,0 +1,106 @@
+[
+  {
+    "date": "2014-12-31",
+    "id": "4",
+    "type": "private",
+    "operation": "withdraw",
+    "amount": "1200.00",
+    "currency": "EUR"
+  },
+  {
+    "date": "2015-01-01",
+    "id": "4",
+    "type": "private",
+    "operation": "withdraw",
+    "amount": "1000.00",
+    "currency": "EUR"
+  },
+  {
+    "date": "2016-01-05",
+    "id": "4",
+    "type": "private",
+    "operation": "withdraw",
+    "amount": "1000.00",
+    "currency": "EUR"
+  },
+  {
+    "date": "2016-01-05",
+    "id": "1",
+    "type": "private",
+    "operation": "deposit",
+    "amount": "200.00",
+    "currency": "EUR"
+  },
+  {
+    "date": "2016-01-06",
+    "id": "2",
+    "type": "business",
+    "operation": "withdraw",
+    "amount": "300.00",
+    "currency": "EUR"
+  },
+  {
+    "date": "2016-01-06",
+    "id": "1",
+    "type": "private",
+    "operation": "withdraw",
+    "amount": "30000",
+    "currency": "JPY"
+  },
+  {
+    "date": "2016-01-07",
+    "id": "1",
+    "type": "private",
+    "operation": "withdraw",
+    "amount": "1000.00",
+    "currency": "EUR"
+  },
+  {
+    "date": "2016-01-07",
+    "id": "1",
+    "type": "private",
+    "operation": "withdraw",
+    "amount": "100.00",
+    "currency": "USD"
+  },
+  {
+    "date": "2016-01-10",
+    "id": "1",
+    "type": "private",
+    "operation": "withdraw",
+    "amount": "100.00",
+    "currency": "EUR"
+  },
+  {
+    "date": "2016-01-10",
+    "id": "2",
+    "type": "business",
+    "operation": "deposit",
+    "amount": "10000.00",
+    "currency": "EUR"
+  },
+  {
+    "date": "2016-01-10",
+    "id": "3",
+    "type": "private",
+    "operation": "withdraw",
+    "amount": "1000.00",
+    "currency": "EUR"
+  },
+  {
+    "date": "2016-02-15",
+    "id": "1",
+    "type": "private",
+    "operation": "withdraw",
+    "amount": "300.00",
+    "currency": "EUR"
+  },
+  {
+    "date": "2016-02-19",
+    "id": "5",
+    "type": "private",
+    "operation": "withdraw",
+    "amount": "3000000",
+    "currency": "JPY"
+  }
+]

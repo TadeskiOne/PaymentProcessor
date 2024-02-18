@@ -1,0 +1,62 @@
+{
+    "name": "tadeskione/payment-processor",
+    "description": "Payment Processor",
+    "keywords": [],
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "PaymentProcessor\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PaymentProcessor\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=8.1",
+        "ext-bcmath": "*",
+        "tadeskione/payment-processor-app-custom": "*",
+        "tadeskione/payment-processor-app-laravel": "*",
+        "tadeskione/payment-processor-app-symfony": "*"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "3.49.0",
+        "phpspec/prophecy-phpunit": "^2.1",
+        "phpunit/phpunit": "^9.6"
+    },
+    "config": {
+        "sort-packages": true,
+        "bin-dir": "bin"
+    },
+    "scripts": {
+        "phpunit": "phpunit",
+        "fix-cs": "php-cs-fixer fix",
+        "test-cs": "php-cs-fixer fix --dry-run -v",
+        "test": ["@phpunit", "@test-cs"]
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "apps/CustomApp",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "apps/LaravelApp",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "apps/SymfonyApp",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "version": "1.0.0"
+}

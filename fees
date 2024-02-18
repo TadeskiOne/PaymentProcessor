@@ -1,0 +1,18 @@
+#!/bin/bash
+
+FilePath=$1
+Driver=$2
+
+if [[ -z "$Driver" ]]; then
+    Driver="custom"
+fi
+
+if [[ "$Driver" == "custom" ]]; then
+    apps/CustomApp/bin/app fees "$FilePath"
+elif [[ "$Driver" == "laravel" ]]; then
+    apps/LaravelApp/artisan fees "$FilePath"
+elif [[ "$Driver" == "symfony" ]]; then
+    apps/SymfonyApp/bin/app fees "$FilePath"
+else
+    echo "Invalid driver. Should be 'custom', 'laravel' or 'symfony'."
+fi

@@ -1,0 +1,52 @@
+services:
+  _defaults:
+    autowire: true
+    public: true
+    autoconfigure: true
+
+  PaymentProcessor\:
+    resource: '../../../src/*/Definitions/*'
+    autowire: false
+    tags: ['interface']
+
+  PaymentProcessor\Apps\Symfony\Component\CurrencyApi\GuzzleApiProvider:
+    autowire: true
+
+  PaymentProcessor\Components\CurrencyApi\Definitions\ApiInterface: '@PaymentProcessor\Apps\Symfony\Component\CurrencyApi\GuzzleApiProvider'
+
+  GuzzleHttp\Client:
+    autowire: true
+
+  PaymentProcessor\Services\ValuationService:
+    arguments:
+      $container: '@service_container'
+
+  PaymentProcessor\Apps\Symfony\Command\CalculateCommissionFeesCommand:
+    arguments:
+      $container: '@service_container'
+
+  PaymentProcessor\Valuation\CommissionsFee\Components\RulesMath:
+    tags: ['fee.math']
+
+  PaymentProcessor\Valuation\CommissionsFee\Rules\BusinessWithdrawRule:
+    tags: ['fee.rules']
+
+  PaymentProcessor\Valuation\CommissionsFee\Rules\PrivateWithdrawRule:
+    tags: ['fee.rules']
+
+  PaymentProcessor\Valuation\CommissionsFee\Rules\DepositRule:
+    tags: ['fee.rules']
+
+  PaymentProcessor\Valuation\CommissionsFee\Scenarios\DepositScenario:
+    arguments:
+      $collector: '@PaymentProcessor\Valuation\Components\DefaultRulesCollector'
+    tags: ['fee.scenarios']
+
+  PaymentProcessor\Valuation\CommissionsFee\Scenarios\WithdrawScenario:
+    arguments:
+      $collector: '@PaymentProcessor\Valuation\Components\DefaultRulesCollector'
+    tags: ['fee.scenarios']
+
+  PaymentProcessor\Valuation\Components\DefaultRulesCollector:
+    arguments:
+      $container: '@service_container'
