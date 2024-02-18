@@ -15,7 +15,6 @@
     },
     "require": {
         "php": ">=8.1",
-        "ext-bcmath": "*",
         "tadeskione/payment-processor-app-custom": "*",
         "tadeskione/payment-processor-app-laravel": "*",
         "tadeskione/payment-processor-app-symfony": "*"

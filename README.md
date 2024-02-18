@@ -7,7 +7,7 @@ Open root of project via terminal and specify:
 composer install
 ```
 
-Minimum requirements is a PHP 8.1 and installed library BCMath
+Minimum requirements is a PHP 8.1
 
 Then, define env-variable CURRENCY_API_PATH in `.env.example`
 ```
