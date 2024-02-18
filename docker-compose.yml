@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  php-cli:
+    container_name: pay-process
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: tail -f /dev/null

@@ -7,7 +7,10 @@ Open root of project via terminal and specify:
 composer install
 ```
 
-Minimum requirements is a PHP 8.1
+Minimum requirements is a PHP 8.1 or up Docker container
+```shell
+docker-compose up -d
+```
 
 Then, define env-variable CURRENCY_API_PATH in `.env.example`
 ```
@@ -29,14 +32,23 @@ Project contains a CSV example of the such file, so you could use it:
 ./fees test.csv
 ```
 
+The same via Docker:
+```shell
+docker exec -it pay-process bash
+>> ./fees test.csv
+```
+OR
+```shell
+docker exec pay-process ./fees test.csv
+```
+
 
 The core code of the solution is framework-agnostic, so three application examples based on different platforms have been added to the project: Laravel, Symfony, and a custom build composed of various components.
 
 You can switch application
 ```shell
 ./fees {path_to_your_file} {application_driver}
-```
-
+``` 
  - `custom` - for custom application
  - `laravel` - for Laravel-based application
  - `symfony` - for Symfony-based application
@@ -52,6 +64,16 @@ Example:
 ```
 ```shell
 ./fees test.csv custom
+```
+And via Docker:
+```shell
+docker exec pay-process ./fees test.csv laravel
+```
+```shell
+docker exec pay-process ./fees test.csv symfony
+```
+```shell
+docker exec pay-process ./fees test.csv custom
 ```
 
 ## Testing

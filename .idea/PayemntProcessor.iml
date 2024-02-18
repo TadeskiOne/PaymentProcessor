@@ -2,9 +2,11 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/apps" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="PaymentProcessor\" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" packagePrefix="PaymentProcessor\Tests\" />
+      <sourceFolder url="file://$MODULE_DIR$/apps/CustomApp/src" isTestSource="false" packagePrefix="PaymentProcessor\Apps\Custom\" />
+      <sourceFolder url="file://$MODULE_DIR$/apps/LaravelApp/app" isTestSource="false" packagePrefix="PaymentProcessor\Apps\Laravel\" />
+      <sourceFolder url="file://$MODULE_DIR$/apps/SymfonyApp/src" isTestSource="false" packagePrefix="PaymentProcessor\Apps\Symfony\" />
       <excludeFolder url="file://$MODULE_DIR$/bin" />
       <excludeFolder url="file://$MODULE_DIR$/vendor" />
     </content>
