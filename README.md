@@ -18,7 +18,7 @@ docker exec -it pay-process bash
 >> composer install
 ```
 
-Minimum requirements is a PHP 8.1 if you'll run app without Docker
+The minimum requirements is a PHP 8.1 if you run app without Docker
 
 Then, define env-variable CURRENCY_API_PATH in `.env.example`
 ```
@@ -36,11 +36,11 @@ docker exec -it pay-process bash
 
 ## Run app
 
-Basically run in the terminal from the project root command:
+Run in the terminal from the project root command:
 ```shell
 ./fees {path_to_your_file}
 ```
-Project contains a CSV example of the such file, so you could use it:
+The project contains a CSV example of the such file, so you could use it:
 ```shell
 ./fees test.csv
 ```
@@ -66,7 +66,7 @@ You can switch application
  - `laravel` - for Laravel-based application
  - `symfony` - for Symfony-based application
 
-Default application is `custom`
+The default application is `custom`
 
 Example:
 ```shell
