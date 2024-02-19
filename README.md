@@ -29,7 +29,7 @@ composer run set-envs
 ```
 OR via Docker
 ```shell
- docker exec pay-process composer composer run set-envs
+ docker exec pay-process composer run set-envs
 ```
 
 ## Run app
@@ -89,7 +89,7 @@ composer run test
 ```
 Via Docker:
 ```shell
- docker exec pay-process composer composer run test
+ docker exec pay-process composer run test
 ```
 
 ## Documentation
