@@ -17,11 +17,13 @@ abstract class AbstractRule implements CommissionFeeRuleInterface
 {
     protected float $amount = 0.00;
 
-    protected FeeAmountType    $amountType;
+    protected FeeAmountType $amountType;
 
     protected FeeOperationType $feeOperationType;
 
-    public function __construct(protected readonly RulesMath $operations) {}
+    public function __construct(protected readonly RulesMath $operations)
+    {
+    }
 
     public function applyTo(TransactionImmutableInterface $transaction): TransactionImmutableInterface
     {
@@ -35,6 +37,7 @@ abstract class AbstractRule implements CommissionFeeRuleInterface
     public function setAmount(float $amount): static
     {
         $this->amount = $amount;
+
         return $this;
     }
 
@@ -46,6 +49,7 @@ abstract class AbstractRule implements CommissionFeeRuleInterface
     public function setAmountType(RuleAmountTypeInterface $amountType): static
     {
         $this->amountType = $amountType;
+
         return $this;
     }
 
@@ -57,6 +61,7 @@ abstract class AbstractRule implements CommissionFeeRuleInterface
     public function setOperationType(RuleOperationTypeInterface $feeOperationType): static
     {
         $this->feeOperationType = $feeOperationType;
+
         return $this;
     }
 

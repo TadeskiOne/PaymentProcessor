@@ -14,8 +14,7 @@ composer install
 ```
 OR via Docker
 ```shell
-docker exec -it pay-process bash
->> composer install
+docker exec pay-process composer install
 ```
 
 The minimum requirements is a PHP 8.1 if you run app without Docker
@@ -30,8 +29,7 @@ composer run set-envs
 ```
 OR via Docker
 ```shell
-docker exec -it pay-process bash
->> composer run set-envs
+ docker exec pay-process composer composer run set-envs
 ```
 
 ## Run app
@@ -46,11 +44,6 @@ The project contains a CSV example of the such file, so you could use it:
 ```
 
 The same via Docker:
-```shell
-docker exec -it pay-process bash
->> ./fees test.csv
-```
-OR
 ```shell
 docker exec pay-process ./fees test.csv
 ```
@@ -93,6 +86,10 @@ docker exec pay-process ./fees test.csv custom
 
 ```shell
 composer run test
+```
+Via Docker:
+```shell
+ docker exec pay-process composer composer run test
 ```
 
 ## Documentation
