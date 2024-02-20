@@ -17,7 +17,7 @@ OR via Docker
 docker exec pay-process composer install
 ```
 
-The minimum requirements is a PHP 8.1 if you run app without Docker
+The minimum requirement is a PHP 8.1 if you run an app without Docker
 
 Then, define env-variable CURRENCY_API_PATH in `.env.example`
 ```
