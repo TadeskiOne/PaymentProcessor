@@ -17,7 +17,7 @@ OR via Docker
 docker exec pay-process composer install
 ```
 
-The minimum requirements is a PHP 8.1 if you run app without Docker
+The minimum requirement is a PHP 8.1 if you run an app without Docker
 
 Then, define env-variable CURRENCY_API_PATH in `.env.example`
 ```
@@ -29,7 +29,7 @@ composer run set-envs
 ```
 OR via Docker
 ```shell
- docker exec pay-process composer composer run set-envs
+ docker exec pay-process composer run set-envs
 ```
 
 **If `CURRENCY_API_PATH` is not specified, will be used default (you can actually skip step with setting this var and just set up envs)**
@@ -91,7 +91,7 @@ composer run test
 ```
 Via Docker:
 ```shell
- docker exec pay-process composer composer run test
+ docker exec pay-process composer run test
 ```
 
 ## Documentation
