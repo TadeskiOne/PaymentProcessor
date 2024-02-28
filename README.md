@@ -32,6 +32,8 @@ OR via Docker
  docker exec pay-process composer composer run set-envs
 ```
 
+**If `CURRENCY_API_PATH` is not specified, will be used default (you can actually skip step with setting this var and just set up envs)**
+
 ## Run app
 
 Run in the terminal from the project root command:
@@ -93,8 +95,9 @@ Via Docker:
 ```
 
 ## Documentation
- 1. [General](docs/general_info.md)
- 2. [Code guidance](docs/code)
+ 1. [The Task](docs/task.md)
+ 2. [General](docs/general_info.md)
+ 3. [Code guidance](docs/code)
     1. [Entities](docs/code/entites.md)
     2. [Valuation](docs/code/valuation.md)
     3. [Valuation Service](docs/code/valuation_service.md)

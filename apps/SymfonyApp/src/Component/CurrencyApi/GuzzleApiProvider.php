@@ -22,7 +22,9 @@ final class GuzzleApiProvider implements ApiInterface
     public function getRates(): RatesCollectionInterface
     {
         try {
-            $response = $this->httpClient->get(getenv('CURRENCY_API_PATH'));
+            $apiPath = getenv('CURRENCY_API_PATH') ?: base64_decode('aHR0cHM6Ly9kZXZlbG9wZXJzLnBheXNlcmEuY29tL3Rhc2tzL2FwaS9jdXJyZW5jeS1leGNoYW5nZS1yYXRlcw==');
+
+            $response = $this->httpClient->get($apiPath);
 
             return RatesCollection::make(
                 json_decode($response->getBody()->getContents(), true)
